@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-llm
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llama-llm
+  template:
+    metadata:
+      labels:
+        app: llama-llm
+    spec:
+      containers:
+      - name: llama-server
+        image: llama-llm:local
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llama-llm
+  namespace: default
+spec:
+  selector:
+    app: llama-llm
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: NodePort
